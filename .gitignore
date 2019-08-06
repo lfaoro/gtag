@@ -6,6 +6,7 @@
 *.dylib
 
 .idea
+.vscode
 spec.md
 vendor/
 
