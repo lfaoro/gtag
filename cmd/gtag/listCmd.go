@@ -9,15 +9,14 @@ import (
 
 var listCmd = cli.Command{
 	Name:    "list",
-	Aliases: []string{"l", "li", "lis"},
+	Aliases: []string{"l", "lis"},
 	Usage:   "lists all tags",
 	Flags:   []cli.Flag{},
 	Action: func(c *cli.Context) error {
-		cmd := exec.Command("sh", "-c",
-			"git --no-pager tag -l")
-		outErr, err := cmd.CombinedOutput()
+		out, err := exec.Command("sh", "-c",
+			"git --no-pager tag -l").CombinedOutput()
 		exitIfError(err)
-		fmt.Println(string(outErr))
+		fmt.Println(string(out))
 		return nil
 	},
 }

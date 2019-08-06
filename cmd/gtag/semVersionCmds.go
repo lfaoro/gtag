@@ -5,14 +5,14 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/blang/semver"
+	"github.com/lfaoro/semver"
 	"github.com/urfave/cli"
 )
 
 func semCmd(cmd string) cli.Command {
 	return cli.Command{
 		Name:    cmd,
-		Aliases: []string{cmd[0:0], cmd[0:1], cmd[0:2]},
+		Aliases: []string{cmd[0:2]},
 		Usage:   fmt.Sprintf("increases %v semantic version", cmd),
 		Flags: []cli.Flag{
 			cli.StringFlag{
@@ -20,8 +20,8 @@ func semCmd(cmd string) cli.Command {
 				Usage: "adds message to the new tag",
 			},
 			cli.BoolFlag{
-				Name:  "push, p",
-				Usage: "push tags to origin",
+				Name:   "push, p",
+				Usage:  "push tags to origin",
 				EnvVar: "GTAG_PUSH",
 			},
 		},

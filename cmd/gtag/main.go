@@ -47,6 +47,7 @@ func main() {
 		semCmd("patch"),
 		semCmd("minor"),
 		semCmd("major"),
+		deleteCmd,
 	}
 
 	err := app.Run(os.Args)

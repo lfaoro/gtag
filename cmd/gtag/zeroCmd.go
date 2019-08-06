@@ -9,8 +9,8 @@ import (
 
 var zeroCmd = cli.Command{
 	Name:    "zero",
-	Aliases: []string{"z", "ze", "zer"},
-	Usage:   "create zero tag v0.0.0",
+	Aliases: []string{"z"},
+	Usage:   "create zero tag 0.0.0",
 	Flags:   []cli.Flag{},
 	Action: func(c *cli.Context) error {
 		commit, err := exec.Command("sh", "-c",
