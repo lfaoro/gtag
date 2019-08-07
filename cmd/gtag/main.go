@@ -38,13 +38,17 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		cli.ShowAppHelpAndExit(c, 2)
+		cmd := c.App.Command("list")
+		err := cmd.Run(c)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
-	app.Before = func(*cli.Context) error {
-		 exitIfError(isGitRepo())
-		 return nil
+	app.Before = func(c *cli.Context) error {
+		exitIfError(isGitRepo())
+		return nil
 	}
 
 	app.Commands = []cli.Command{
