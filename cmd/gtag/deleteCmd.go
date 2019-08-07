@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -28,6 +30,10 @@ var deleteCmd = cli.Command{
 		tags := strings.Split(s, "\n")
 
 		if c.Bool("all") {
+			input := bufio.NewReader(os.Stdin)
+			fmt.Print("You're about to delete all tags, sure? ")
+			_, err := input.ReadString('\n')
+			exitIfError(err)
 			for _, tag := range tags {
 				err := deleteTag(tag)
 				if err != nil {
