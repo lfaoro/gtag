@@ -42,6 +42,11 @@ func main() {
 		return nil
 	}
 
+	app.Before = func(*cli.Context) error {
+		 exitIfError(isGitRepo())
+		 return nil
+	}
+
 	app.Commands = []cli.Command{
 		listCmd,
 		zeroCmd,
