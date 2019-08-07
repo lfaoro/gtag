@@ -8,19 +8,20 @@ import (
 )
 
 var (
-	// version is injected during the release process.
+	// vars are injected during the release process.
+	// ldflags are set by Goreleaser
+	//
+	// ref: https://goreleaser.com/environment/
 	version = "dev"
-	// commit is injected during the release process.
-	commit = "none"
-	// date is injected during the release process.
-	date = "unknown"
+	commit  = "none"
+	date    = "unknown"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "gTag"
 	app.Usage = "gTag is a $(git tag) workflow tool"
-	app.Version = fmt.Sprintf("%s %s %s", version, commit, date)
+	app.Version = fmt.Sprintf("%s \ncommit %s \nbuilt on %s", version, commit, date)
 	app.EnableBashCompletion = true
 	app.Authors = []cli.Author{
 		{
