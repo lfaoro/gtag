@@ -10,7 +10,7 @@ import (
 var listCmd = cli.Command{
 	Name:    "list",
 	Aliases: []string{"l", "lis"},
-	Usage:   "lists all tags",
+	Usage:   "list all git tags",
 	Flags:   []cli.Flag{},
 	Action: func(c *cli.Context) error {
 		out, err := exec.Command("sh", "-c",
