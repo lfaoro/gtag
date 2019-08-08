@@ -21,8 +21,7 @@ var deleteCmd = cli.Command{
 		},
 	},
 	Action: func(c *cli.Context) error {
-		out, err := exec.Command("sh", "-c",
-			"git --no-pager tag -l").CombinedOutput()
+		out, err := shellCmd("git --no-pager tag -l")
 		if err != nil {
 			return err
 		}
@@ -43,6 +42,17 @@ var deleteCmd = cli.Command{
 				fmt.Printf("deleted tag %v\n", tag)
 			}
 			return nil
+		}
+
+		if c.NArg() > 0 {
+			for _, tag := range c.Args() {
+				err = deleteTag(tag)
+				if err != nil {
+					return err
+				}
+				fmt.Printf("deleted tag %v\n", tag)
+				return nil
+			}
 		}
 
 		tag := tags[len(tags)-1:][0]
