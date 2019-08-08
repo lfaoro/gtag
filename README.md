@@ -37,7 +37,7 @@ You're about to delete all tags, are you sure? y/n
 
 ### macOS
 ```bash
-brew install lfaoro/tap/flares
+brew install lfaoro/tap/gtag
 ```
 
 ### Linux (soon)
