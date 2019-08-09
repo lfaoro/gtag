@@ -41,12 +41,15 @@ func SemVersion(c *cli.Context, field string) error {
 		return err
 	}
 
-	tag := strings.TrimSuffix(lastTag, "\n")
-	vOld, err := semver.Make(tag)
+	tag := strings.TrimSpace(lastTag)
+	tag = strings.TrimPrefix(tag, "v")
+	fmt.Println(tag)
+
+	vNew, err := semver.Make(tag)
 	if err != nil {
 		return err
 	}
-	vNew := vOld
+	vOld := "v" + vNew.String()
 
 	switch field {
 	case "patch":
@@ -60,15 +63,17 @@ func SemVersion(c *cli.Context, field string) error {
 		return err
 	}
 
+	vNewS := "v" + vNew.String()
+
 	var message string
 	if msg := c.String("message"); msg != "" {
 		message = msg
 	} else {
-		message = fmt.Sprintf("incremented %v -> %v on commit %v\n", vOld, vNew, string(commit[:8]))
+		message = fmt.Sprintf("incremented %v -> %v on commit %v\n", vOld, vNewS, commit[:8])
 	}
 	fmt.Printf(message)
 
-	cmd := fmt.Sprintf("git tag -a %v -m \"%v\"", vNew, message)
+	cmd := fmt.Sprintf("git tag -a %v -m \"%v\"", vNewS, message)
 	newTag, err := shellCmd(cmd)
 	if err != nil {
 		fmt.Println(newTag)
@@ -76,7 +81,7 @@ func SemVersion(c *cli.Context, field string) error {
 	}
 
 	if c.Bool("push") {
-		cmd := fmt.Sprintf("git push origin %v", vNew)
+		cmd := fmt.Sprintf("git push origin %v", vNewS)
 		push, err := shellCmd(cmd)
 		if err != nil {
 			fmt.Println(push)
