@@ -12,7 +12,7 @@ var (
 	// ldflags are set by Goreleaser
 	//
 	// ref: https://goreleaser.com/environment/
-	version = "dev"
+	version = "latest-dev"
 	commit  = "none"
 	date    = "unknown"
 )

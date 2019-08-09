@@ -13,7 +13,8 @@ import (
 var deleteCmd = cli.Command{
 	Name:    "delete",
 	Aliases: []string{"d", "del"},
-	Usage:   "deletes the last created tag, pass --all to delete all tags at once.",
+	Usage: "delete the last created tag, pass --all to delete all tags at once.\n" +
+		"providing a tag as argument, will delete that specific tag",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "all",
@@ -25,14 +26,20 @@ var deleteCmd = cli.Command{
 		if err != nil {
 			return err
 		}
-		s := strings.TrimSpace(string(out))
+		s := strings.TrimSpace(out)
 		tags := strings.Split(s, "\n")
 
 		if c.Bool("all") {
 			input := bufio.NewReader(os.Stdin)
 			fmt.Print("You're about to delete all tags, sure? ")
-			_, err := input.ReadString('\n')
+
+			b, err := input.ReadString('\n')
 			exitIfError(err)
+			if strings.Contains(b, "n") {
+				fmt.Println("Deletion cancelled.")
+				return nil
+			}
+
 			for _, tag := range tags {
 				err := deleteTag(tag)
 				if err != nil {

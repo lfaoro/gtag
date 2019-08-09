@@ -28,8 +28,10 @@ var listCmd = cli.Command{
 			return errors.Wrap(err, "shell command failed")
 		}
 		s := strings.TrimSpace(out)
+		if s == "" {
+			return errors.New("repo has no tags, create one w/ `gtag zero`")
+		}
 		tags := strings.Split(s, "\n")
-		// tags data: [0.0.0 0.1.0 0.2.0 0.3.0]
 
 		var tagData [][]string
 		for _, tag := range tags {

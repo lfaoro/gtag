@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os/exec"
 	"strings"
 
 	"github.com/lfaoro/semver"
@@ -17,11 +16,11 @@ func semCmd(cmd string) cli.Command {
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:  "message, m",
-				Usage: "adds message to the new tag",
+				Usage: "adds a message to the new tag",
 			},
 			cli.BoolFlag{
 				Name:   "push, p",
-				Usage:  "push tags to origin",
+				Usage:  "pushes tags upstream",
 				EnvVar: "GTAG_PUSH",
 			},
 		},
@@ -32,31 +31,30 @@ func semCmd(cmd string) cli.Command {
 }
 
 func SemVersion(c *cli.Context, field string) error {
-	commit, err := exec.Command("sh", "-c",
-		"git rev-parse HEAD").CombinedOutput()
+	commit, err := shellCmd("git rev-parse HEAD")
 	if err != nil {
 		return err
 	}
 
-	lastTag, err := exec.Command("sh", "-c",
-		"git describe --abbrev=0").CombinedOutput()
+	lastTag, err := shellCmd("git describe --abbrev=0")
 	if err != nil {
 		return err
 	}
-	tag := strings.TrimSuffix(string(lastTag), "\n")
-	v, err := semver.Make(tag)
+
+	tag := strings.TrimSuffix(lastTag, "\n")
+	vOld, err := semver.Make(tag)
 	if err != nil {
 		return err
 	}
-	v0 := v
+	vNew := vOld
 
 	switch field {
 	case "patch":
-		err = v.IncrementPatch()
+		err = vNew.IncrementPatch()
 	case "minor":
-		err = v.IncrementMinor()
+		err = vNew.IncrementMinor()
 	case "major":
-		err = v.IncrementMajor()
+		err = vNew.IncrementMajor()
 	}
 	if err != nil {
 		return err
@@ -66,21 +64,20 @@ func SemVersion(c *cli.Context, field string) error {
 	if msg := c.String("message"); msg != "" {
 		message = msg
 	} else {
-		message = fmt.Sprintf("incremented %v -> %v on commit %v\n", v0, v, string(commit[:8]))
+		message = fmt.Sprintf("incremented %v -> %v on commit %v\n", vOld, vNew, string(commit[:8]))
 	}
 	fmt.Printf(message)
-	cmd := fmt.Sprintf("git tag -a %v -m \"%v\"", v, message)
-	newTag, err := exec.Command("sh", "-c",
-		cmd).CombinedOutput()
+
+	cmd := fmt.Sprintf("git tag -a %v -m \"%v\"", vNew, message)
+	newTag, err := shellCmd(cmd)
 	if err != nil {
-		fmt.Println(string(newTag))
+		fmt.Println(newTag)
 		return err
 	}
 
 	if c.Bool("push") {
-		cmd := fmt.Sprintf("git push origin %v", v)
-		push, err := exec.Command("sh", "-c",
-			cmd).CombinedOutput()
+		cmd := fmt.Sprintf("git push origin %v", vNew)
+		push, err := shellCmd(cmd)
 		if err != nil {
 			fmt.Println(push)
 			return err
