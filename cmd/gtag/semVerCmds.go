@@ -43,7 +43,6 @@ func SemVersion(c *cli.Context, field string) error {
 
 	tag := strings.TrimSpace(lastTag)
 	tag = strings.TrimPrefix(tag, "v")
-	fmt.Println(tag)
 
 	vNew, err := semver.Make(tag)
 	if err != nil {
