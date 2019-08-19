@@ -17,6 +17,8 @@ var (
 	date    = "unknown"
 )
 
+var debugFlag bool
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "gTag"
@@ -31,10 +33,11 @@ func main() {
 	}
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:   "debug",
-			Usage:  "displays debug information.",
-			EnvVar: "GTAG_DEBUG",
-			Hidden: true,
+			Name:        "debug, d",
+			Usage:       "displays debug information.",
+			EnvVar:      "GTAG_DEBUG",
+			Destination: &debugFlag,
+			Hidden:      true,
 		},
 	}
 	app.Action = func(c *cli.Context) error {

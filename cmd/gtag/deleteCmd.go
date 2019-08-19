@@ -17,8 +17,11 @@ var deleteCmd = cli.Command{
 		"providing a tag as argument, will delete that specific tag",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
-			Name:  "all",
+			Name:  "all, a",
 			Usage: "removes all tags",
+		}, cli.BoolFlag{
+			Name:  "remote, r",
+			Usage: "removes tag from remote",
 		},
 	},
 	Action: func(c *cli.Context) error {
@@ -41,7 +44,7 @@ var deleteCmd = cli.Command{
 			}
 
 			for _, tag := range tags {
-				err := deleteTag(tag)
+				err := deleteTag(tag, false)
 				if err != nil {
 					return err
 				}
@@ -53,7 +56,7 @@ var deleteCmd = cli.Command{
 
 		if c.NArg() > 0 {
 			for _, tag := range c.Args() {
-				err = deleteTag(tag)
+				err = deleteTag(tag, false)
 				if err != nil {
 					return err
 				}
@@ -63,7 +66,7 @@ var deleteCmd = cli.Command{
 		}
 
 		tag := tags[len(tags)-1:][0]
-		err = deleteTag(tag)
+		err = deleteTag(tag, false)
 		if err != nil {
 			return err
 		}
@@ -73,7 +76,7 @@ var deleteCmd = cli.Command{
 	},
 }
 
-func deleteTag(tag string) error {
+func deleteTag(tag string, remote bool) error {
 	cmd := fmt.Sprintf("git tag -d %v", tag)
 	out, err := exec.Command("sh", "-c",
 		cmd).CombinedOutput()

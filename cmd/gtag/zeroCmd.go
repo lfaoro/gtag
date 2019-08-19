@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/urfave/cli"
@@ -14,7 +15,10 @@ var zeroCmd = cli.Command{
 	Action: func(c *cli.Context) error {
 		commit, err := shellCmd("git rev-parse HEAD")
 		if err != nil {
-			return err
+			if debugFlag {
+				fmt.Println(err)
+			}
+			return errors.New("no commits in this repo to apply a tag")
 		}
 
 		outErr, err := shellCmd("git tag -a v0.0.0 -m \"the zero tag\"")

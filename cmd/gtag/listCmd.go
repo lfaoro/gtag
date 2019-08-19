@@ -25,7 +25,7 @@ var listCmd = cli.Command{
 	Action: func(c *cli.Context) error {
 		out, err := shellCmd("git --no-pager tag -l")
 		if err != nil {
-			return errors.Wrap(err, "shell command failed")
+			return errors.Wrap(err, "unable to list tags")
 		}
 		s := strings.TrimSpace(out)
 		if s == "" {
@@ -46,6 +46,9 @@ var listCmd = cli.Command{
 		}
 
 		for _, d := range tagInfo {
+			if d.tag == "" {
+				continue
+			}
 			output := fmt.Sprintf("tag %v [%v] by %v on %v",
 				d.tag, d.commit, d.tagger, d.time)
 			fmt.Println(output)
@@ -58,7 +61,13 @@ var listCmd = cli.Command{
 func dataFor(tag string) []string {
 	cmd := fmt.Sprintf("git cat-file tag %v", tag)
 	out, err := shellCmd(cmd)
-	exitIfError(err)
+	if err != nil {
+		if debugFlag {
+			fmt.Println(err)
+		}
+		fmt.Printf("tag %s has no data available\n", tag)
+		return []string{}
+	}
 
 	tagInfo := strings.Split(out, "\n")
 	return tagInfo
