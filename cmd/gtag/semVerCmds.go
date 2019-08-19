@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/lfaoro/semver"
@@ -34,6 +36,10 @@ func SemVersion(c *cli.Context, field string) error {
 	commit, err := shellCmd("git rev-parse HEAD")
 	if err != nil {
 		return err
+	}
+	// shorten commit string without causing a possible panic.
+	if len(commit) >= 8 {
+		commit = commit[:8]
 	}
 
 	lastTag, err := shellCmd("git describe --abbrev=0")
@@ -68,7 +74,7 @@ func SemVersion(c *cli.Context, field string) error {
 	if msg := c.String("message"); msg != "" {
 		message = msg
 	} else {
-		message = fmt.Sprintf("incremented %v -> %v on commit %v\n", vOld, vNewS, commit[:8])
+		message = fmt.Sprintf("incremented tag %v -> %v on commit %v\n", vOld, vNewS, commit)
 	}
 	fmt.Printf(message)
 
@@ -79,15 +85,43 @@ func SemVersion(c *cli.Context, field string) error {
 		return err
 	}
 
-	if c.Bool("push") {
-		cmd := fmt.Sprintf("git push origin %v", vNewS)
-		push, err := shellCmd(cmd)
+	yesPush := c.Bool("yesPush")
+	if yesPush {
+		err := pushTag(vNewS)
 		if err != nil {
-			fmt.Println(push)
 			return err
 		}
-		fmt.Println(push)
+	} else {
+		// ask the user
+		input := bufio.NewReader(os.Stdin)
+		fmt.Print("Would you like to push this tag to the origin? ")
+
+		b, err := input.ReadString('\n')
+		exitIfError(err)
+
+		// return if the user doesn't want to push
+		if strings.Contains(b, "n") {
+			fmt.Printf("tag %s not pushed to the origin\n", tag)
+			return nil
+		}
+
+		// push to the origin
+		err = pushTag(vNewS)
+		if err != nil {
+			return err
+		}
 	}
 
+	return nil
+}
+
+func pushTag(tag string) error {
+	cmd := fmt.Sprintf("git push origin %v", tag)
+	push, err := shellCmd(cmd)
+	if err != nil {
+		fmt.Println(push)
+		return err
+	}
+	fmt.Println(push)
 	return nil
 }
