@@ -13,21 +13,20 @@ set -e
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
   set -x
-  curl -fsSL "https://github.com/lfaoro/${APP}/releases/download/v${VERSION}/${APP}_${VERSION}_linux_amd64.tar.gz" |
-    tar -xzv
+  curl -fsSL "https://github.com/lfaoro/${APP}/releases/download/v${VERSION}/${APP}_${VERSION}_linux_amd64.tar.gz" \
+  | tar -xzv
   ${APP}
   sudo mv ${APP} /usr/local/bin/${APP}
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   if [[ "$BREW" != "" ]]; then
     set -x
-    brew tap lfaoro/tap
     brew install lfaoro/tap/${APP}
   else
     set -x
     curl -fsSL \
-    "https://github.com/lfaoro/${APP}/releases/download/v${VERSION}/${APP}_${VERSION}_linux_amd64.tar.gz" \
-     | tar -xzv ${APP}
+      "https://github.com/lfaoro/${APP}/releases/download/v${VERSION}/${APP}_${VERSION}_linux_amd64.tar.gz" |
+      tar -xzv ${APP}
     sudo mv ${APP} /usr/local/bin/${APP}
   fi
 
