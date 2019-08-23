@@ -14,8 +14,7 @@ set -e
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
   set -x
   curl -fsSL "https://github.com/lfaoro/${APP}/releases/download/v${VERSION}/${APP}_${VERSION}_linux_amd64.tar.gz" \
-  | tar -xzv
-  ${APP}
+  | tar -xzv ${APP}
   sudo mv ${APP} /usr/local/bin/${APP}
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
