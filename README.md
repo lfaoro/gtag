@@ -35,14 +35,14 @@ You're about to delete all tags, are you sure? y/n
 
 ### [Video Tutorial](https://asciinema.org/a/261318)
 
-### macOS
+### macOS (Homebrew)
 ```bash
 brew install lfaoro/tap/gtag
 ```
 
-### Linux (soon)
+### Linux & macOS
 ```bash
-curl dl.fireblaze.io/gtag.sh | bash
+curl -fsSL https://raw.githubusercontent.com/lfaoro/gtag/master/hack/install.sh | bash
 ```
 
 ### Developers
